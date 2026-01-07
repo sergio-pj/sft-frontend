@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos (Histórico de OS)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo Personalizações Almeida" class="logo">
+        <nav>
+            <a href="index.html">Dashboard (Pedidos)</a>
+            <a href="novo-pedido.html">Novo Pedido</a>
+            <a href="historico.html">Histórico de Clientes</a>
+            <a href="pedidos.html">Pedidos</a>
+        </nav>
+        <div id="authControls" style="margin-left: auto; display:flex; align-items:center; gap:10px; padding-right:10px;">
+            <!-- preenchido por js -->
+        </div>
+    </header>
+
+    <h1>Pedidos / Ordens de Serviço</h1>
+
+    <section class="dashboard-cards">
+        <div class="card">
+            <strong>Pedidos Pendentes</strong>
+            <div id="contagemPendentes">0</div>
+        </div>
+        <div class="card">
+            <strong>Faturamento Total</strong>
+            <div id="faturamentoTotal">R$ 0,00</div>
+        </div>
+        <div class="card">
+            <strong>Faturamento (Entregues)</strong>
+            <div id="valorFaturado">R$ 0,00</div>
+        </div>
+    </section>
+
+    <section id="filtros">
+        <label for="filtroStatus">Filtrar por Status:</label>
+        <select id="filtroStatus">
+            <option value="todos">Todos</option>
+            <option value="A Fazer">A Fazer</option>
+            <option value="Entregue">Entregue</option>
+        </select>
+
+        <label for="filtroDataEntrega">Entrega:</label>
+        <select id="filtroDataEntrega">
+            <option value="todos">Todas as Datas</option>
+            <option value="hoje">Entrega Hoje</option>
+        </select>
+
+        <label for="filtroBusca">Buscar:</label>
+        <input type="text" id="filtroBusca" placeholder="Nome do cliente, serviço ou número">
+    </section>
+
+    <table id="tabelaPedidos">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Entrega</th>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="js/config.js"></script>
+    <script src="js/sanitize.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+    // Aplica filtros simples sobre a tabela que já é preenchida por carregarPedidos()
+    function aplicarFiltros() {
+        const busca = (document.getElementById('filtroBusca')?.value || '').toLowerCase();
+        const statusFiltro = document.getElementById('filtroStatus')?.value || 'todos';
+        const dataFiltro = document.getElementById('filtroDataEntrega')?.value || 'todos';
+
+        const linhas = document.querySelectorAll('#tabelaPedidos tbody tr');
+        linhas.forEach(linha => {
+            const status = (linha.cells[0]?.textContent || '').trim();
+            const entrega = (linha.cells[1]?.textContent || '').trim();
+            const cliente = (linha.cells[2]?.textContent || '').toLowerCase();
+            const servico = (linha.cells[3]?.textContent || '').toLowerCase();
+
+            let mostrar = true;
+
+            if (statusFiltro !== 'todos' && status !== statusFiltro) mostrar = false;
+
+            if (dataFiltro === 'hoje') {
+                const hoje = new Date();
+                const dataEntrega = new Date(entrega);
+                if (isNaN(dataEntrega.getTime())) mostrar = false;
+                else {
+                    if (dataEntrega.toDateString() !== hoje.toDateString()) mostrar = false;
+                }
+            }
+
+            if (busca) {
+                if (!(cliente.includes(busca) || servico.includes(busca) || linha.textContent.toLowerCase().includes(busca))) mostrar = false;
+            }
+
+            linha.style.display = mostrar ? '' : 'none';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Sempre que a tabela for atualizada por carregarPedidos(), aplicar filtros
+        const observer = new MutationObserver(() => aplicarFiltros());
+        const tbody = document.querySelector('#tabelaPedidos tbody');
+        if (tbody) observer.observe(tbody, { childList: true, subtree: true });
+
+        ['filtroBusca','filtroStatus','filtroDataEntrega'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', aplicarFiltros);
+            if (el) el.addEventListener('change', aplicarFiltros);
+        });
+    });
+    </script>
+
+    <a href="novo-pedido.html" class="fab-button" title="Novo Pedido">+</a>
+</body>
+</html>

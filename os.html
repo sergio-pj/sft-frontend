@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Ordem de Serviço</title>
+    <link rel="stylesheet" href="css/os.css">
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="index.html">Dashboard (Pedidos)</a>
+            <a href="novo-pedido.html">Novo Pedido</a>
+            <a href="pedidos.html">Pedidos</a>
+        </nav>
+        <div id="authControls" style="margin-left:auto; padding-right:10px;"></div>
+    </header>
+
+    <main id="os-container">
+        <section class="os-card">
+            <header class="os-card-header">
+                <div>
+                    <h1 id="osTitulo">ORDEM DE SERVIÇO N° —</h1>
+                    <div class="os-meta">
+                        <span id="osCliente">Cliente</span> · <span id="osContato">Contato</span>
+                    </div>
+                </div>
+                <div class="os-actions">
+                    <button id="btnImprimir" onclick="window.print()">Imprimir</button>
+                    <button id="btnEditarPedido">Editar</button>
+                </div>
+            </header>
+
+            <div class="os-grid">
+                <div class="os-info">
+                    <p><strong>Nº Pedido:</strong> <span id="osNumPedido">—</span></p>
+                    <p><strong>Emissão:</strong> <span id="osDataEmissao">—</span></p>
+                    <p><strong>Entrega:</strong> <span id="osDataEntrega">—</span></p>
+                    <p><strong>Pagamento:</strong> <span id="osFormaPagamento">—</span></p>
+                    <p><strong>Status:</strong> <span id="osStatus">—</span></p>
+                </div>
+                <div class="os-financeiro">
+                    <p><strong>Valor Total:</strong> <span id="osValorTotal">R$ 0,00</span></p>
+                    <p><strong>Valor Sinal:</strong> <span id="osValorSinal">R$ 0,00</span></p>
+                    <p><strong>Restante:</strong> <span id="osValorRestante">R$ 0,00</span></p>
+                </div>
+            </div>
+
+            <section class="os-descricao">
+                <h3>Descrição do Serviço</h3>
+                <p id="osDescricaoServico">—</p>
+                <h4>Detalhes de Produção / Tamanhos</h4>
+                <p id="osDetalhesProducao">—</p>
+            </section>
+
+            <section class="os-itens">
+                <h3>Itens</h3>
+                <table id="osTabelaItens" class="tabela-itens-os">
+                    <thead>
+                        <tr><th>Item</th><th>Qtd</th><th>Preço Un.</th><th>Total</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section class="os-anotacoes">
+                <h4>Anotações</h4>
+                <textarea id="osAnotacoes" rows="4"></textarea>
+            </section>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
