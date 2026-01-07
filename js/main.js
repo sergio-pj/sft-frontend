@@ -303,6 +303,66 @@ function findPedidoByIdAcrossKeys(pedidoId) {
     return null;
 }
 
+// Versão que retorna também a chave do localStorage onde o pedido foi encontrado
+function findPedidoWithSource(pedidoId) {
+    try {
+        // Primeiro tenta a key padrão (getPedidosKey())
+        const tentativa = readLocalPedidos();
+        const found = tentativa.find(p =>
+            String(p.id) === String(pedidoId) ||
+            String(p._id) === String(pedidoId) ||
+            String(p.serverId) === String(pedidoId) ||
+            String(p.legacyId) === String(pedidoId)
+        );
+        if (found) return { pedido: found, sourceKey: getPedidosKey() };
+
+        // Varre todas as chaves do localStorage procurando por keys que comecem com 'pedidos_loja'
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!key || !key.startsWith('pedidos_loja')) continue;
+            try {
+                const arr = JSON.parse(localStorage.getItem(key) || '[]');
+                if (!Array.isArray(arr)) continue;
+                const f = arr.find(p =>
+                    String(p.id) === String(pedidoId) ||
+                    String(p._id) === String(pedidoId) ||
+                    String(p.serverId) === String(pedidoId) ||
+                    String(p.legacyId) === String(pedidoId)
+                );
+                if (f) return { pedido: f, sourceKey: key };
+            } catch (e) { /* ignore parse errors */ }
+        }
+    } catch (err) { console.warn('findPedidoWithSource error:', err); }
+    return { pedido: null, sourceKey: null };
+}
+
+// Dev helper: popula um pedido de exemplo em localStorage (útil para testar a OS sem colar no console)
+async function populateSamplePedido() {
+    try {
+        const sample = [{
+            id: 'p-1',
+            nomeCliente: 'João Silva',
+            contato: '(11) 99999-0000',
+            valorTotal: 60,
+            valorSinal: 0,
+            status: 'A Fazer',
+            dataEntrega: new Date('2026-01-09').toISOString(),
+            itens: [{ nome: 'Camiseta', quantidade: 1, precoUnitario: 60 }],
+            descricaoServico: 'Serigrafia básica',
+            detalhesTamanho: 'M',
+            dataCriacao: '2001-01-01'
+        }];
+
+        localStorage.setItem('pedidos_loja_admin-local', JSON.stringify(sample));
+        showToast('Pedido de exemplo criado em localStorage (pedidos_loja_admin-local).', 'success');
+        // Recarrega o conteúdo da OS atual para refletir o novo pedido
+        await carregarOrdemDeServico();
+    } catch (e) {
+        console.warn('populateSamplePedido error:', e);
+        showToast('Falha ao popular pedido de exemplo: ' + (e.message || e), 'error');
+    }
+}
+
 function logout() {
     // remove somente os dados ligados ao admin atual (evita apagar a key global)
     const adminData = JSON.parse(localStorage.getItem('adminData') || 'null');
@@ -1431,11 +1491,18 @@ document.addEventListener('DOMContentLoaded', () => {
         String(p.legacyId) === String(pedidoId)
     );
 
-    // Se não encontrado localmente, tenta buscar no servidor (se tiver token)
+    // Se não encontrado localmente, tenta buscar em outras keys locais (pedidos_loja_*) antes do servidor
+    let sourceKey = null;
     if (!pedido) {
-        // tenta em outras keys locais (pedidos_loja_*) antes do servidor
-        pedido = findPedidoByIdAcrossKeys(pedidoId);
+        const res = findPedidoWithSource(pedidoId);
+        if (res && res.pedido) {
+            pedido = res.pedido;
+            sourceKey = res.sourceKey || null;
+        }
+    } else {
+        sourceKey = getPedidosKey();
     }
+
     // Se ainda não encontrado, tenta buscar no servidor (se tiver token)
     if (!pedido) {
         const token = localStorage.getItem('adminToken');
@@ -1445,6 +1512,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (resp.ok) {
                     const serverPedidos = await resp.json();
                     pedido = serverPedidos.find(p => String(p._id) === String(pedidoId) || String(p.legacyId) === String(pedidoId));
+                    if (pedido) sourceKey = 'server';
                 }
             } catch (e) {
                 console.warn('Erro ao buscar pedido no servidor para OS:', e);
@@ -1461,6 +1529,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="os-header">
                 <h2>ORDEM DE SERVIÇO N° ${displayNumber}</h2>
                 <p>Data de Emissão: <strong>${dataPedido}</strong></p>
+            </div>
+
+            <div class="os-debug" style="margin-top:8px; font-size:0.9em; color:#555;">
+                Fonte dos dados: <strong id="osFonte">${sourceKey || 'local'}</strong>
             </div>
 
                 <div class="os-cliente">
@@ -1525,6 +1597,24 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (document.getElementById('os-container')) { // Para os.html
     carregarOrdemDeServico();
     }
+
+// Anexa o comportamento do botão dev (se existir) — mostra apenas em localhost ou quando ?dev=1
+(function attachDevPopulate() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const showDev = params.get('dev') === '1' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+        const btn = document.getElementById('btnDevPopulate');
+        if (!btn) return;
+        if (showDev) {
+            btn.style.display = 'inline-block';
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                await populateSamplePedido();
+                btn.disabled = false;
+            });
+        }
+    } catch (e) { /* ignore */ }
+})();
     
     // --- LÓGICA DE INICIALIZAÇÃO DA PÁGINA DASHBOARD (index.html) ---
     if (document.querySelector('#tabelaPedidos')) {
