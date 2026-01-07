@@ -270,6 +270,39 @@ function getPedidoDisplayNumber(pedido) {
     return '';
 }
 
+// Procura um pedido pelo id/legacyId/serverId/_id em todas as chaves locais do formato `pedidos_loja*`.
+function findPedidoByIdAcrossKeys(pedidoId) {
+    try {
+        // Primeiro tenta a key padrão (getPedidosKey())
+        const tentativa = readLocalPedidos();
+        const found = tentativa.find(p =>
+            String(p.id) === String(pedidoId) ||
+            String(p._id) === String(pedidoId) ||
+            String(p.serverId) === String(pedidoId) ||
+            String(p.legacyId) === String(pedidoId)
+        );
+        if (found) return found;
+
+        // Varre todas as chaves do localStorage procurando por keys que comecem com 'pedidos_loja'
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!key || !key.startsWith('pedidos_loja')) continue;
+            try {
+                const arr = JSON.parse(localStorage.getItem(key) || '[]');
+                if (!Array.isArray(arr)) continue;
+                const f = arr.find(p =>
+                    String(p.id) === String(pedidoId) ||
+                    String(p._id) === String(pedidoId) ||
+                    String(p.serverId) === String(pedidoId) ||
+                    String(p.legacyId) === String(pedidoId)
+                );
+                if (f) return f;
+            } catch (e) { /* ignore parse errors */ }
+        }
+    } catch (err) { console.warn('findPedidoByIdAcrossKeys error:', err); }
+    return null;
+}
+
 function logout() {
     // remove somente os dados ligados ao admin atual (evita apagar a key global)
     const adminData = JSON.parse(localStorage.getItem('adminData') || 'null');
@@ -1228,7 +1261,12 @@ async function inicializarOS() {
     // Tenta encontrar pelo mais comum: id numérico
     let pedido = pedidos.find(p => String(p.id) === String(pedidoId) || String(p.legacyId) === String(pedidoId) || String(p.serverId) === String(pedidoId) || String(p._id) === String(pedidoId));
 
-    // Se não encontrou localmente, tenta buscar do servidor (se houver token)
+    // Se não encontrou localmente, tenta procurar em outras chaves locais (pedidos_loja_<adminId>)
+    if (!pedido) {
+        pedido = findPedidoByIdAcrossKeys(pedidoId);
+    }
+
+    // Se ainda não encontrou localmente, tenta buscar do servidor (se houver token)
     if (!pedido) {
         const token = localStorage.getItem('adminToken');
         if (token) {
@@ -1394,6 +1432,11 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Se não encontrado localmente, tenta buscar no servidor (se tiver token)
+    if (!pedido) {
+        // tenta em outras keys locais (pedidos_loja_*) antes do servidor
+        pedido = findPedidoByIdAcrossKeys(pedidoId);
+    }
+    // Se ainda não encontrado, tenta buscar no servidor (se tiver token)
     if (!pedido) {
         const token = localStorage.getItem('adminToken');
         if (token) {
