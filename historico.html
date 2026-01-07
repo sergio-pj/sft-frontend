@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Clientes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+
+    <header>
+        <img src="logo.png" alt="Logo Personalizações Almeida" class="logo">
+        <nav>
+            <a href="index.html">Dashboard (Pedidos)</a>
+            <a href="novo-pedido.html">Novo Pedido</a>
+            <a href="historico.html">Histórico de Clientes</a>
+            <a href="clientes.html">Clientes</a>
+        </nav>
+        <div id="authControls" style="margin-left: auto; display:flex; align-items:center; gap:10px; padding-right:10px;">
+            <!-- preenchido por js -->
+        </div>
+    </header>
+    <h1>Histórico de Pedidos por Cliente</h1>
+
+    <div id="filtrosBusca">
+        <div id="relatorioCliente">
+        </div>
+        
+        <div class="busca-input-container">
+            <label for="inputBuscaCliente" class="label-busca">Buscar Cliente:</label>
+            <input type="text" id="inputBuscaCliente" placeholder="Digite o nome do cliente" title="Buscar por Nome do Cliente">
+            </div>
+        
+        </div>
+    
+    <table id="tabelaHistorico" class="tabela-historico-principal">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Data Entrega</th>
+                <th>Cliente</th>
+                <th>Serviço/Contato</th>
+                <th>Valor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <script src="js/main.js"></script>
+    <a href="novo-pedido.html" class="fab-button" title="Novo Pedido">+</a> 
+</body>
+</html>

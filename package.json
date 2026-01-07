@@ -1,0 +1,29 @@
+{
+  "name": "sistema-pedidos-personalizacao-almeida",
+  "version": "1.0.0",
+  "description": "Backend para sistema de pedidos - Personalizações Almeida",
+  "main": "server/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "prebuild": "node build-config.js",
+    "build": "echo \"static build (no-op)\""
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}

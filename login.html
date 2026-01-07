@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistema de Pedidos (Offline)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .login-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .login-form input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .login-form button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .login-form button:hover {
+      background-color: #45a049;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .register-link a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    .error-message {
+      color: #ff0000;
+      text-align: center;
+      margin-bottom: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2 style="text-align: center; margin-bottom: 20px;">Login</h2>
+    <div id="errorMessage" class="error-message"></div>
+    <form id="loginForm" class="login-form">
+      <input type="email" id="email" placeholder="E-mail" required>
+      <input type="password" id="senha" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <script src="js/admin_config.js"></script>
+  <script>
+    // Autenticação simples local (offline): compara com `window.ADMIN_CONFIG`
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.style.display = 'none';
+
+      const cfg = window.ADMIN_CONFIG;
+      if (!cfg || !cfg.admin) {
+        errorMessage.textContent = 'Configuração de admin ausente.';
+        errorMessage.style.display = 'block';
+        return;
+      }
+
+      if (email.toLowerCase() === (cfg.admin.email || '').toLowerCase() && senha === cfg.password) {
+        // Login bem-sucedido localmente
+        const admin = cfg.admin;
+        localStorage.setItem('adminToken', 'local-token');
+        localStorage.setItem('adminData', JSON.stringify(admin));
+
+        // Preencher dados de exemplo em localStorage (se ainda não existirem)
+        const pedidosKey = 'pedidos_loja_' + admin._id;
+        const clientesKey = 'clientes_loja_' + admin._id;
+
+        if (!localStorage.getItem(pedidosKey) && Array.isArray(cfg.samplePedidos)) {
+          localStorage.setItem(pedidosKey, JSON.stringify(cfg.samplePedidos));
+        }
+        if (!localStorage.getItem(clientesKey) && Array.isArray(cfg.sampleClientes)) {
+          localStorage.setItem(clientesKey, JSON.stringify(cfg.sampleClientes));
+        }
+
+        window.location.href = 'index.html';
+      } else {
+        errorMessage.textContent = 'E-mail ou senha incorretos.';
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

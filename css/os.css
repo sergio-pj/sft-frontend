@@ -1,0 +1,235 @@
+/* ====================================================================
+   ESTILOS GERAIS/CARD PARA ORDEM DE SERVIÇO (os.html)
+   (Baseado na estrutura: main.os-container > #osDetalhesCard)
+   ==================================================================== */
+
+/* Estilo para a tag MAIN, garantindo padding e o fundo da página (que vem do style.css) */
+.os-container {
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+
+/* --- Card Principal da OS (Substitui o #os-container antigo) --- */
+#osDetalhesCard {
+    width: calc(100% - 60px); 
+    max-width: 900px; 
+    margin: 20px auto; 
+    padding: 30px;
+    background-color: white; /* Card branco para contraste */
+    border-radius: 8px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); 
+    color: #343a40; /* Texto escuro dentro do card */
+}
+
+#osTitulo {
+    color: #2A4365; /* Azul marinho */
+    text-align: center;
+    display: block;
+    border-bottom: 2px solid #a0a0a0; /* Amarelo de destaque */
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 100%;
+}
+
+/* --- Estilo de Seções (section.os-secao) --- */
+.os-secao {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #e9ecef; /* Borda cinza claro */
+    border-radius: 5px;
+}
+
+.os-secao h2 {
+    color: #2A4365; /* Título principal da seção */
+    font-size: 1.2em;
+    border-left: 5px solid #a0a0a0; /* Linha amarela de destaque */
+    padding-left: 10px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.os-secao h3 {
+    color: #444; /* Subtítulo (Itens do Pedido, etc.) */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Layout de Grid para Campos Lado a Lado (Valores e Dados do Cliente) */
+.os-campo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px 30px; /* Espaçamento entre as colunas */
+    margin-top: 15px;
+}
+
+.os-secao p {
+    margin: 5px 0;
+}
+
+.os-secao strong {
+    color: #343a40;
+}
+
+/* Estilo para o campo de Anotações (TEXTAREA) */
+#osAnotacoes {
+    width: 100%;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f8f9fa; 
+    box-sizing: border-box;
+    font-size: 1em;
+    min-height: 100px;
+}
+
+/* --- Estilos da Tabela de Itens --- */
+.tabela-itens-os {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.95em;
+}
+
+.tabela-itens-os th, .tabela-itens-os td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabela-itens-os th {
+    background-color: #f1f1f1;
+    color: #2A4365;
+}
+
+/* Estilo para Status */
+.os-status {
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+}
+.os-status-afazer { background-color: #cf9f00; } /* Laranja */
+.os-status-entregue { background-color: #28a745; } /* Verde */
+
+/* Estilo para o Valor Total (Destacado) */
+#osValorTotal {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #dc3545; /* Vermelho para o valor total */
+}
+
+/* --- Botões e Rodapé --- */
+.os-botoes-rodape {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-os-imprimir,
+.btn-os-editar,
+.btn-os-voltar {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 10px;
+    transition: background-color 0.2s;
+}
+
+.btn-os-imprimir {
+    background-color: #2A4365;
+    color: white;
+}
+
+.btn-os-editar {
+    background-color: #a0a0a0; /* Amarelo */
+    color: #343a40;
+}
+
+.btn-os-voltar {
+    background-color: #0072d6; /* Cinza */
+    color: rgb(255, 255, 255);
+}
+
+/* ================================================= */
+/* ESTILOS PARA IMPRESSÃO (@media print) */
+/* (Estes estão corretos e foram mantidos) */
+/* ================================================= */
+
+@media print {
+    /* Oculta cabeçalho principal e botões na impressão */
+    header,
+    .os-botoes-rodape {
+        display: none;
+    }
+    
+    body {
+        padding-top: 0;
+        background-color: white;
+    }
+    
+    /* Remove a estilização de card para a impressão */
+    #osDetalhesCard {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+    }
+    
+    /* Garante que o texto fique preto na impressão */
+    * {
+        color: #000 !important;
+    }
+}
+
+#osValorRestante{
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #28a745; /* Verde para o valor restante */
+}
+
+.os-actions {
+    color: #000;
+    display: block;
+    font-family: Arial, sans-serif;
+    padding-bottom: 50px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    text-align: center;
+    unicode-bidi: isolate;
+}
+
+.os-logo {
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+    padding-bottom: 20px;
+    padding-left: 50px;
+}
+
+/* Container que envolve a Logo e o Título/Número da OS */
+.os-header-topo {
+    display: flex;
+    align-items: center; /* Centraliza verticalmente o título e a logo */
+    margin-bottom: 20px; /* Adiciona um espaço abaixo do cabeçalho */
+    padding: 0 150px; /* Opcional: um pequeno padding lateral */
+}
+
+/* Estilo para a Logo (ajuste o max-width conforme o tamanho desejado) */
+.logo-os {
+    max-width: 150px; /* Exemplo: limite o tamanho da logo */
+    height: auto;
+}
+
+/* Ajusta o H1 para remover margens que possam atrapalhar o alinhamento */
+#osTitulo {
+    font-size: 1.5em; /* Ajuste o tamanho da fonte se necessário */
+    margin: 0; /* Remove margens padrão do H1 */
+    text-align: right; /* Garante que o texto fique alinhado à direita se houver mais espaço */
+}
