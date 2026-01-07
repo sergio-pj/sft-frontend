@@ -1,0 +1,60 @@
+/* Estilos padronizados para a tela Clientes / Pedidos */
+
+:root{
+    --primary:#2A4365;
+    --accent:#0072d6;
+    --muted:#6c757d;
+    --bg-card:#ffffff;
+    --border: #e9ecef;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Contêiner principal */
+#clientesContainer, .dashboard-cards {
+    max-width: 1100px;
+    margin: 18px auto;
+    padding: 0 18px;
+}
+
+.dashboard-cards { display:flex; gap:12px; margin-bottom:18px; }
+.dashboard-cards .card{ flex:1; background:var(--bg-card); padding:14px; border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,0.04); border:1px solid var(--border); }
+.dashboard-cards .card strong{ display:block; color:var(--muted); font-size:0.9rem; }
+.dashboard-cards .card div{ font-size:1.2rem; font-weight:700; margin-top:8px; color:var(--primary); }
+
+/* Filtros e ações */
+#filtros, .busca-input-container { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0; }
+#filtros label, .busca-input-container label { font-weight:600; color:var(--muted); }
+#filtros input[type="text"], #filtros select, .busca-input-container input { padding:8px 10px; border:1px solid var(--border); border-radius:6px; min-width:160px; }
+
+.fab-button{ position:fixed; right:22px; bottom:22px; width:56px; height:56px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:28px; box-shadow:0 8px 18px rgba(0,0,0,0.18); }
+
+/* Tabela de clientes/pedidos */
+#tabelaClientes, #tabelaPedidos, #tabelaHistorico {
+    width:100%; border-collapse:collapse; background:transparent; margin-top:12px; font-size:0.95rem;
+}
+#tabelaClientes th, #tabelaPedidos th, #tabelaHistorico th,
+#tabelaClientes td, #tabelaPedidos td, #tabelaHistorico td { padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; }
+#tabelaClientes thead th, #tabelaPedidos thead th, #tabelaHistorico thead th { background: #fafafa; color:var(--primary); font-weight:600; }
+
+.btn-acao, .btn-sync, .btn-editar, .btn-excluir { padding:6px 10px; border-radius:6px; border:none; cursor:pointer; font-size:0.9rem; }
+.btn-acao{ background:#28a745; color:#fff; }
+.btn-edit{ background:#6c757d; color:#fff; }
+.btn-excluir{ background:#dc3545; color:#fff; }
+
+/* Indicadores de status */
+.sync-badge{ padding:4px 8px; border-radius:12px; font-size:0.75rem; color:#fff; }
+.sync-pendente{ background:#ffc107; color:#111; }
+.sync-erro{ background:#dc3545; }
+
+/* Responsividade */
+@media (max-width:800px){
+    .dashboard-cards{ flex-direction:column; }
+    #filtros{ flex-direction:column; align-items:flex-start; }
+    .fab-button{ right:14px; bottom:14px; }
+}
+
+/* Pequena harmonização com o os.css */
+.os-card, .relatorio-card{ max-width:1100px; margin:18px auto; }
