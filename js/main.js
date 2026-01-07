@@ -271,10 +271,17 @@ function getPedidoDisplayNumber(pedido) {
 }
 
 function logout() {
+    // remove somente os dados ligados ao admin atual (evita apagar a key global)
+    const adminData = JSON.parse(localStorage.getItem('adminData') || 'null');
+    const pedidosKey = adminData && adminData._id ? `pedidos_loja_${adminData._id}` : null;
+
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminData');
-    // também limpa pedidos locais para evitar dados antigos visíveis
-    removeLocalPedidosKey();
+
+    if (pedidosKey) {
+        try { localStorage.removeItem(pedidosKey); } catch (e) { /* ignore */ }
+    }
+
     // redireciona para tela de login
     window.location.href = 'login.html';
 }
@@ -467,7 +474,7 @@ async function carregarPedidos() {
         const syncButton = (pedido.pendenteSincronizacao || pedido.syncError) ? `<button class="btn-sync" data-pedido-id="${pid}" onclick="syncSinglePedido(this)">Sincronizar</button>` : '';
 
         acoesCell.innerHTML = `
-            <button class="btn-editar btn-os" data-pedido-id="${pid}" onclick="window.location.href='os.html?id=${pid}'">Ver OS</button>
+            <a href="os.html?id=${pid}" class="btn-editar btn-os" data-pedido-id="${pid}">Ver OS</a>
             <button class="btn-acao" data-pedido-id="${pid}" onclick="marcarComoEntregue(this)">Concluir</button>
             ${syncButton}
             ${indicador}
@@ -555,7 +562,7 @@ async function buscarHistorico() {
         const syncBtn2 = (pedido.pendenteSincronizacao || pedido.syncError) ? `<button class="btn-sync" data-pedido-id="${pid2}" onclick="syncSinglePedido(this)">Sincronizar</button>` : '';
 
         acoesCell.innerHTML = `
-            <button class="btn-editar btn-os" data-pedido-id="${pid2}" onclick="window.location.href='os.html?id=${pid2}'">Ver OS</button>
+            <a href="os.html?id=${pid2}" class="btn-editar btn-os" data-pedido-id="${pid2}">Ver OS</a>
             ${pedido.status === 'Entregue' ? 
                 `<button class="btn-acao btn-reabrir" data-pedido-id="${pid2}" onclick="reabrirPedido(this)">Reabrir</button>` : 
                 `<button class="btn-acao" data-pedido-id="${pid2}" onclick="marcarComoEntregue(this)">Concluir</button>`
